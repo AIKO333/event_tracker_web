@@ -2,7 +2,6 @@ const express = require('express');
 const cron = require('node-cron');
 const twilio = require('twilio')
 const bodyParser = require('body-parser');
-const mysql = require('mysql');
 const cors = require('cors');
 const app = express();
 const path = require('path');
@@ -10,21 +9,19 @@ const sgMail = require('@sendgrid/mail');
 const { parsePhoneNumberFromString } = require('libphonenumber-js');
 const PORT = process.env.PORT || 5432;
 
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    port: process.env.PORT
+const { Client } = require('pg');
+
+const connection = new Client({
+  host: process.env.DB_HOST,
+  port: 5432,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
 });
 
-connection.connect(err => {
-    if (err) {
-        console.error('Error connecting to MySQL database:', err);
-        return;
-    }
-    console.log('Connected to MySQL database');
-});
+connection.connect()
+  .then(() => console.log("Connected to PostgreSQL!"))
+  .catch(err => console.error("Connection error", err.stack));
 
 app.set('view engine', 'ejs');
 
