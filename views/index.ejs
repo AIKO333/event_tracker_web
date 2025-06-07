@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>CelebrateMate - Automated Reminder Application</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js">
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href='https://fonts.googleapis.com/css?family=Gloria+Hallelujah' rel='stylesheet' type='text/css'>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+
+    </head>
+
+    <body>
+
+        <header>
+
+            <div style="background: url('bg2.jpg')" class="jumbotron bg-cover text-white">
+                <div class="container py-3 text-center">
+                    <div style="float: left;">
+                    <div class="top-text display-3 font-weight-bold">
+                        <span data-text="Celebrate"></span>
+                        <span data-text="Mate"></span>
+                    </div></div>
+                    <br><br><br>
+                    <p class="font-italic mb-0 header-text">Welcome to CelebrateMate</p>
+                    <p class="font-italic header-text">"Where every moment is a reason to rejoice"</p>
+                    <br>
+                    <nav>
+                        <ul>
+                            <li><button class="section-button" onclick="ShowHome()">Home</button></li>
+                            <li><button class="section-button" onclick="ShowAbout()">About </button></li>
+                            <li><button class="section-button" onclick="ShowEvents()">Events</button></li>
+                            <li><button class="section-button" onclick="ShowProfile()">Profile</button></li>
+                            <li><button class="section-button" onclick="ShowContact()">Contact</button></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+        </header>
+
+        <main>
+            <section id="home">
+                <p class="main-paragraph">Welcome to CelebrateMate, where every moment is a reason to rejoice! In our fast-paced lives, it's easy to lose track of those special occasions that bring joy and connection. That's where CelebrateMate steps in – your trusted companion for automated birthday and anniversary reminders. Say goodbye to missed celebrations and hello to heartfelt connections, as CelebrateMate ensures you never forget a cherished moment with your loved ones.</p>
+
+                    <form class="profile-form" id="profileForm">
+    
+                        <div class="segment profile-form-text">
+                        <h1>Create Your Profile</h1>
+                        </div>
+
+                        <label class="profile-form-label" for="name">
+                            <input type="text" placeholder="Name" class="profile-form-input" id="name" name="name" required/>
+                        </label>
+                        <label class="profile-form-label" for="birthdate"> <p class="profile-form-birthdate profile-form-text">Birthdate:</p>
+                            <input type="date" class="profile-form-input" id="birthdate" name="birthdate" required/>
+                        </label>
+                        <label class="profile-form-label" for="email">
+                            <input type="email" placeholder="Email" class="profile-form-input" id="email" name="email" required/>
+                        </label>
+                        <label class="profile-form-label" for="phone">
+                            <input type="tel" placeholder="Phone Number" class="profile-form-input" id="phone" name="phone" required/>
+                        </label>
+
+                        <button class="color profile-form-button" type="submit"><i class="icon ion-md-lock"></i>Submit Profile</button>
+
+                    </form>
+
+                <div  id="website_inside" class="hidden">
+                    <br><br>
+                    
+                    <div class="single-item">
+                        <div>
+                            <span>Personalized Message</span>
+                            <p>Send a handwritten letter or a heartfelt message to express your appreciation. Personal touches make all the difference!</p>
+                        </div>
+                        <div>
+                            <span>Customized Gifts</span>
+                            <p>Create a custom gift like a photo album, a scrapbook, or a personalized piece of jewelry. It shows thoughtfulness and care.</p>
+                        </div>
+                        <div>
+                            <span>Surprise Party</span>
+                            <p>Organize a surprise party with close friends and family. Plan some fun activities and make it a memorable event.</p>
+                        </div>
+                        <div>
+                            <span>Memory Lane</span>
+                            <p>Create a scrapbook or a digital slideshow of cherished moments together. Include photos, tickets, and notes.</p>
+                        </div>
+                        <div>
+                            <span>Special Meal</span>
+                            <p>Cook their favorite meal or dine at a special restaurant. Consider a themed dinner or a picnic in a scenic location.</p>
+                        </div>
+                        <div>
+                            <span>Handmade Gifts</span>
+                            <p>Create something with your own hands, like a knitted scarf, a piece of pottery, or a hand-painted picture.</p>
+                        </div>
+                        <div>
+                            <span>Adventure Day</span>
+                            <p>Plan a day full of adventure activities such as hiking, kayaking, or exploring a new city together.</p>
+                        </div>
+                        <div>
+                            <span>Time Capsule</span>
+                            <p>Create a time capsule with items that are meaningful to your relationship. Plan to open it together on a future date.</p>
+                        </div>
+                    </div>
+                    
+                    <h2 class="rainbow-text">Add A New Event!</h2>
+                    <br>
+
+                        <div class="home-container">
+
+                            <div class="add-event">
+                                <form id="contactForm">
+                                    <input placeholder="Name" for="contactName" id="contactName" name="contactName" type="text" class="event-form-input" required/>
+                                    <label for="eventType">Event Type:</label>
+                                        <select id="eventType" name="eventType" class="event-form-select">
+                                            <option value="birthday">Birthday</option>
+                                            <option value="anniversary">Anniversary</option>
+                                        </select><br><br>
+                                    <label for="date">Date:</label>
+                                    <input type="date" id="date" name="date" required class="event-form-input">
+                                    <input placeholder="Email" for="email" id="email" name="email" type="email" class="event-form-input" required/>
+                                    <br><br>
+                                    <button type="submit" class="event-form-button">Add Event</button>
+                                </form>
+                            </div>
+
+                            <div class="ready-made-message">
+                                <h1 class="rainbow-text" style="text-align: right;">Pre-written message ready for dispatch!</h1>
+                                <br>
+                                <% if(profileData.length > 0)
+                                {
+                                %>
+                                <form class="message-form" id="messageForm">
+                                <fieldset id="messageContent" name="fullMessage">
+                                    <p>Hey, <select name="contactName">
+                                        <% if(eventsResult.length > 0)
+                                            {
+                                                eventsResult.forEach(entry => { %>
+                                                    <option><%= entry.contactName %></option>
+                                                    <%
+                                                    }
+                                                );
+                                            }
+                                        %>
+                                    </select></p>
+                                    <p>Just wanted to take a moment to wish you a very Happy <select>
+                                        <option>Birthday</option>
+                                        <option>Anniversary</option>
+                                    </select>.</p>
+                                    <p>I hope your day is filled with <span class="form__field field--message" data-placeholder="joy" tabindex="1" contenteditable></span> and <span class="form__field field--message" data-placeholder="laughter" tabindex="2" contenteditable></span>.</p>
+                                    <p>Take care and stay <span class="form__field field--message" data-placeholder="awesome" tabindex="3" contenteditable></span>!</p>
+                                    <p>Warm regards,</p>
+                                    <p><span class="form__field field--message" data-placeholder="<%= profileData[0].name %>" tabindex="4" contenteditable></span></p>
+                                    <button type="submit" class="button button--xlarge" tabindex="5">Send message &#187;</button>
+                                </fieldset>
+                                <input type="hidden" name="fullMessage" id="fullMessage">
+                                </form>
+                                <% } %>
+                            </div>
+
+                        </div>
+                        
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+                            <defs>
+                            <filter id="blur0">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0 0" />
+                            </filter>
+                            <filter id="blur1">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0 5" />
+                            </filter>
+                            <filter id="blur2">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0 10" />
+                            </filter>
+                            <filter id="blur3">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0 15" />
+                            </filter>
+                            <filter id="blur4">
+                                <feGaussianBlur in="SourceGraphic" stdDeviation="0 20" />
+                            </filter>
+                            </defs>
+                        </svg>
+
+                </div>
+
+            </section>
+
+            <section id="about" class="hidden">
+                <p style="text-align: center; font-size: 1.1rem;">Imagine a world where every special occasion is met with excitement and anticipation, where no birthday goes unnoticed and no anniversary is left uncelebrated. With CelebrateMate, that world becomes a reality. Our user-friendly interface allows you to effortlessly set up personalized profiles for yourself and your contacts, ensuring that important dates are never overlooked. From customizable notifications to seamless integration with your existing contact lists and calendars, CelebrateMate is your all-in-one solution for staying connected and celebrating life's precious moments. At CelebrateMate, we understand the importance of staying connected with the people who matter most. That's why we've designed a seamless web application that not only sends timely reminders but also offers thoughtful suggestions for meaningful ways to celebrate. Whether it's a birthday, anniversary, or any other milestone, CelebrateMate is here to help you make every moment count, fostering stronger relationships and deeper connections along the way.</p>
+                <br>
+                <div id="infostrip" style="background:teal;">
+                    <h1>Personalized Profiles<hr></h1>
+                    <svg class="about-icon icon-camera" ><use xlink:href="#icon-camera"><symbol id="icon-camera" viewBox="0 0 32 32">
+                    <title>camera</title>
+                    <path d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"></path>
+                    </symbol></use></svg>
+                    <p> Our Personalized Profiles feature allows you to manage special occasions with ease. By creating a profile, you can enter your name, birthday, email, and phone number, which helps us provide a tailored experience just for you. Once your profile is set up, you can add events like birthdays and anniversaries, keeping all important dates in one place. CelebrateMate sends you timely notifications via phone and email, reminding you of upcoming celebrations, so you never miss a special moment. Additionally, on your birthday, you’ll receive a personalized happy birthday message, ensuring you feel celebrated and appreciated on your special day. </p>
+                </div>
+                    
+                <div id="infostrip" style="background:#7d5056f7;">
+                    <h1>Add Event Form<hr></h1>
+                    <svg class="about-icon icon-fire"><use xlink:href="#icon-fire"><symbol id="icon-fire" viewBox="0 0 32 32">
+                    <title>fire</title>
+                    <path d="M10.031 32c-2.133-4.438-0.997-6.981 0.642-9.376 1.795-2.624 2.258-5.221 2.258-5.221s1.411 1.834 0.847 4.703c2.493-2.775 2.963-7.196 2.587-8.889 5.635 3.938 8.043 12.464 4.798 18.783 17.262-9.767 4.294-24.38 2.036-26.027 0.753 1.646 0.895 4.433-0.625 5.785-2.573-9.759-8.937-11.759-8.937-11.759 0.753 5.033-2.728 10.536-6.084 14.648-0.118-2.007-0.243-3.392-1.298-5.312-0.237 3.646-3.023 6.617-3.777 10.27-1.022 4.946 0.765 8.568 7.555 12.394z"></path>
+                    </symbol></use></svg>
+                    <p> Our Add Event Form is a simple and intuitive tool where you can input all the necessary details about a person’s special event. You can add their contact information, name, specify the type of event (whether it's a birthday or an anniversary), the date of the event, and their email address. This email will be used to send a customized message from our ready-made message template. This ensures that your wishes are timely and heartfelt, without the hassle of remembering dates or drafting messages. </p>
+                </div>
+                    
+                    
+                <div id="infostrip" style="background:#4c4c4c;">
+                    <h1>Event Board<hr></h1>
+                    <svg class="about-icon icon-bug"><use xlink:href="#icon-bug"></use><symbol id="icon-bug" viewBox="0 0 32 32">
+                    <title>bug</title>
+                    <path d="M32 18v-2h-6.040c-0.183-2.271-0.993-4.345-2.24-6.008h5.061l2.189-8.758-1.94-0.485-1.811 7.242h-5.459c-0.028-0.022-0.056-0.043-0.084-0.064 0.21-0.609 0.324-1.263 0.324-1.944 0-3.305-2.686-5.984-6-5.984s-6 2.679-6 5.984c0 0.68 0.114 1.334 0.324 1.944-0.028 0.021-0.056 0.043-0.084 0.064h-5.459l-1.811-7.242-1.94 0.485 2.189 8.758h5.061c-1.246 1.663-2.056 3.736-2.24 6.008h-6.040v2h6.043c0.119 1.427 0.485 2.775 1.051 3.992h-3.875l-2.189 8.757 1.94 0.485 1.811-7.243h3.511c1.834 2.439 4.606 3.992 7.708 3.992s5.874-1.554 7.708-3.992h3.511l1.811 7.243 1.94-0.485-2.189-8.757h-3.875c0.567-1.217 0.932-2.565 1.051-3.992h6.043z"></path>
+                    </symbol></svg>
+                    <p> The Event Board is where all your added events are stored and displayed like sticky notes on a digital bulletin board. Each sticky note contains the details of an individual event, making it easy to see and manage upcoming celebrations. Birthdays are organized in order of occurrence, so you can see whose birthday is coming up next at a glance. This visual representation helps you stay organized and ensures you never miss an important date. </p>
+                </div>
+
+                <div id="infostrip" style="background:teal;">
+                    <h1>Ready-to-Send Messages<hr></h1>
+                    <svg class="about-icon icon-camera" ><use xlink:href="#icon-camera"><symbol id="icon-camera" viewBox="0 0 32 32">
+                    <title>camera</title>
+                    <path d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"></path>
+                    </symbol></use></svg>
+                    <p> Our Ready-to-Send Message feature offers a convenient message box pre-filled with thoughtful lines, which you can easily personalize. You can select the recipient from your list of contacts and send the message directly to their email. This feature saves you time and ensures your messages are both personal and prompt, adding a special touch to every greeting. </p>
+                </div>
+                    
+                <div id="infostrip" style="background:#7d5056f7;">
+                    <h1>Notifications<hr></h1>
+                    <svg class="about-icon icon-fire"><use xlink:href="#icon-fire"><symbol id="icon-fire" viewBox="0 0 32 32">
+                    <title>fire</title>
+                    <path d="M10.031 32c-2.133-4.438-0.997-6.981 0.642-9.376 1.795-2.624 2.258-5.221 2.258-5.221s1.411 1.834 0.847 4.703c2.493-2.775 2.963-7.196 2.587-8.889 5.635 3.938 8.043 12.464 4.798 18.783 17.262-9.767 4.294-24.38 2.036-26.027 0.753 1.646 0.895 4.433-0.625 5.785-2.573-9.759-8.937-11.759-8.937-11.759 0.753 5.033-2.728 10.536-6.084 14.648-0.118-2.007-0.243-3.392-1.298-5.312-0.237 3.646-3.023 6.617-3.777 10.27-1.022 4.946 0.765 8.568 7.555 12.394z"></path>
+                    </symbol></use></svg>
+                    <p> Never miss a celebration with our Notifications feature. You will receive daily notifications on your phone and email, alerting you about upcoming birthdays or anniversaries happening today or tomorrow. This proactive reminder system ensures you are always prepared to send your best wishes on time. </p>
+                </div>
+
+                <div id="infostrip" style="background:#4c4c4c;">
+                    <h1>Contact Us<hr></h1>
+                    <svg class="about-icon icon-bug"><use xlink:href="#icon-bug"></use><symbol id="icon-bug" viewBox="0 0 32 32">
+                    <title>bug</title>
+                    <path d="M32 18v-2h-6.040c-0.183-2.271-0.993-4.345-2.24-6.008h5.061l2.189-8.758-1.94-0.485-1.811 7.242h-5.459c-0.028-0.022-0.056-0.043-0.084-0.064 0.21-0.609 0.324-1.263 0.324-1.944 0-3.305-2.686-5.984-6-5.984s-6 2.679-6 5.984c0 0.68 0.114 1.334 0.324 1.944-0.028 0.021-0.056 0.043-0.084 0.064h-5.459l-1.811-7.242-1.94 0.485 2.189 8.758h5.061c-1.246 1.663-2.056 3.736-2.24 6.008h-6.040v2h6.043c0.119 1.427 0.485 2.775 1.051 3.992h-3.875l-2.189 8.757 1.94 0.485 1.811-7.243h3.511c1.834 2.439 4.606 3.992 7.708 3.992s5.874-1.554 7.708-3.992h3.511l1.811 7.243 1.94-0.485-2.189-8.757h-3.875c0.567-1.217 0.932-2.565 1.051-3.992h6.043z"></path>
+                    </symbol></svg>
+                    <p> At CelebrateMate, we value your feedback and are committed to providing a seamless user experience. Our Contact Us form allows you to reach out to us with any issues, suggestions, or bugs you may encounter while using our website. We are dedicated to improving our platform and appreciate your input. Your messages are important to us, and we strive to respond promptly to all inquiries. Whether it's a technical glitch or a suggestion for a new feature, your feedback helps us enhance CelebrateMate for everyone. </p>
+                </div>
+                    
+            </section>
+
+            <section id="events" class="hidden">
+
+                <div id="eventsData" data-events="<%= JSON.stringify(eventsResult) %>"></div>
+
+                <h1 class="text-center rainbow-text">Events</h1>
+                <br>
+                    <% 
+                    if(profileData.length > 0)
+                    {
+                        if(!eventsResult.length > 0)
+                        {
+                        %>
+                        <p class="none-text" style="color: #c11a2b;">Add some Events!</p>
+                        <%
+                        }
+                    }
+                    else
+                    {
+                    %>
+                    <p class="none-text" style="color: #c11a2b;">Make a Profile to add some Events!</p>
+                    <%  
+                    }
+                    %>
+
+                <div id="board">
+
+                </div>
+
+            </section>
+
+            <section id="profile" class="hidden">
+                <% 
+                if(profileData.length > 0) 
+                { 
+                %>
+                <div class="container">
+                    <div class="main-body">
+                        <div class="col-lg-8 hidden" id="profile-edit">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form id="editProfileForm">
+                                        <div class="row mb-3">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0">Name</h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                <input type="text" class="form-control" name="name" value="<%= profileData[0].name %>">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0">Birth Date</h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                <% 
+                                                    function formatDate(date) {
+                                                        var d = new Date(date);
+                                                        var month = '' + (d.getMonth() + 1);
+                                                        var day = '' + d.getDate();
+                                                        var year = d.getFullYear();
+
+                                                        if (month.length < 2) month = '0' + month;
+                                                        if (day.length < 2) day = '0' + day;
+
+                                                        return [year, month, day].join('-');
+                                                    }
+                                                    var formattedDate = String(formatDate(profileData[0].birthdate))
+                                                %>
+                                                <input type="date" class="form-control" name="birthdate" value="<%= formattedDate %>">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0">Email</h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                <input type="text" class="form-control" name="email" value="<%= profileData[0].email %>">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0">Phone</h6>
+                                            </div>
+                                            <div class="col-sm-9 text-secondary">
+                                                <input type="text" class="form-control" name="phone" value="<%= profileData[0].phone %>">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-3"></div>
+                                            <div class="col-sm-9 text-secondary">
+                                                <input type="submit" class="btn btn-primary px-4" onclick="SaveChangesButton()" value="Save Changes">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8" id="profile-data">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                        <h6 class="mb-0">Name</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <%= profileData[0].name %>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                        <h6 class="mb-0">Birth Date</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <%= new Date(profileData[0].birthdate).toLocaleDateString('en-US', { month: 'short' }) + " " + new Date(profileData[0].birthdate).toLocaleDateString('en-US', { day: '2-digit' }) + " " + new Date(profileData[0].birthdate).toLocaleDateString('en-US', { year: 'numeric' }) %>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                        <h6 class="mb-0">Email</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <%= profileData[0].email %>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                        <h6 class="mb-0">Phone</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <%= profileData[0].phone %>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-1">
+                                        <a class="btn btn-info" onclick="EditProfileButton()">Edit</a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                        <a class="btn btn-info" id="deleteProfileButton">Remove Profile</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } else { %> <p class="none-text">Make a Profile and start adding Events!</p> <% } %>
+
+            </section>
+
+            <section id="contact" class="hidden">
+                <div class="container container2">
+                    <div class="text">
+                        Contact us Form
+                    </div>
+                    <form action="#">
+                        <div class="form-row">
+                            <div class="input-data">
+                            <input type="text" required>
+                            <div class="underline"></div>
+                            <label for="">First Name</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-data">
+                            <input type="text" required>
+                            <div class="underline"></div>
+                            <label for="">Last Name</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-data">
+                            <input type="text" required>
+                            <div class="underline"></div>
+                            <label for="">Email Address</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="input-data textarea">
+                            <textarea rows="8" cols="80" required></textarea>
+                            <br />
+                            <div class="underline"></div>
+                            <label for="">Write your message</label>
+                            <br />
+                            <div class="form-row submit-btn">
+                            <div class="input-data">
+                                <div class="inner"></div>
+                                <input type="submit" value="submit">
+                            </div>
+                            </div>
+                    </form>
+                    </div>
+                    <br><br><br><br><br><br>
+            </section>
+            
+        </main>
+
+        <footer>
+            <p>&copy; 2024 CelebrateMate. All rights reserved.</p>
+        </footer>
+
+        <script src="script.js"></script>
+
+    </body>
+
+</html>
