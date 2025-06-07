@@ -10,7 +10,7 @@ const { parsePhoneNumberFromString } = require('libphonenumber-js');
 const { Client } = require('pg');
 
 const app = express();
-const PORT = process.env.PORT || 5432;
+const PORT = 3000;
 
 // Initialize PostgreSQL client
 const client = new Client({
