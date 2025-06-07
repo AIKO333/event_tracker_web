@@ -8,7 +8,7 @@ const app = express();
 const path = require('path');
 const sgMail = require('@sendgrid/mail');
 const { parsePhoneNumberFromString } = require('libphonenumber-js');
-const PORT = process.env.PORT || 3306;
+const PORT = process.env.PORT || 5432;
 
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
