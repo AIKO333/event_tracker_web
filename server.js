@@ -192,7 +192,7 @@ app.listen(PORT, () => {
 
 const twilioClient = new twilio('ACa8b7f8803eb57f1b9918dc305fe1070f', 'c2fa5d451be4d354bc37f95b95b6e384');
 
-sgMail.setApiKey('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');
+sgMail.setApiKey('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');
 
 function sendEmailMessage(user, message) {
     const sql = 'SELECT email FROM profile';
