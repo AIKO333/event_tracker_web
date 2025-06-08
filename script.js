@@ -1,12 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    if (profileHAHA.length > 0) {
-      document.getElementById('profileForm')?.classList.add('hidden');
-      document.getElementById('website_inside')?.classList.remove('hidden');
-  } else {
-      document.getElementById('profileForm')?.classList.remove('hidden');
-      document.getElementById('website_inside')?.classList.add('hidden');
-  }
+    const profileData= document.getElementById('profileData').getAttribute('profileData'); 
+    
+    if (profileData.length > 0) {
+        document.getElementById('profileForm').classList.add('hidden');
+        document.getElementById('website_inside').classList.remove('hidden');
+    }
+    else
+    {
+        document.getElementById('profileForm').classList.remove('hidden');
+        document.getElementById('website_inside').classList.add('hidden');
+    }
+
 
     document.getElementById('profileForm').addEventListener('submit', function(event) {
         event.preventDefault();
