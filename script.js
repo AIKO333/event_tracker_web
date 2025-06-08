@@ -1,20 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    const isProfileSubmitted = localStorage.getItem('isProfileSubmitted');
-    
-    if (isProfileSubmitted === "false") {
-        document.getElementById('profileForm').classList.remove('hidden');
-        document.getElementById('website_inside').classList.add('hidden');
-    } else {
+    if(profileData.length > 0) {
         document.getElementById('profileForm').classList.add('hidden');
         document.getElementById('website_inside').classList.remove('hidden');
+    } else {
+        document.getElementById('profileForm').classList.remove('hidden');
+        document.getElementById('website_inside').classList.add('hidden');
     }
 
     document.getElementById('profileForm').addEventListener('submit', function(event) {
         event.preventDefault();
-
-        localStorage.setItem('isProfileSubmitted', 'true');
-
+	    
         document.getElementById('profileForm').classList.add('hidden');
         document.getElementById('website_inside').classList.remove('hidden');
     });
