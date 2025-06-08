@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto+Slab:400");
+@import url("https://fonts.googleapis.com/css?family=Shadows+Into+Light");
 * {
     margin: 0;
     padding: 0;
@@ -610,8 +612,7 @@ select.event-form-select {
   flex: 1;
 }
 
-@import url("https://fonts.googleapis.com/css?family=Roboto+Slab:400");
-@import url("https://fonts.googleapis.com/css?family=Shadows+Into+Light");
+
 
 .message-form {
   max-width: 600px;
