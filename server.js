@@ -190,7 +190,7 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const twilioClient = new twilio('ACa8b7f8803eb57f1b9918dc305fe1070f', 'c2fa5d451be4d354bc37f95b95b6e384');
+const twilioClient = new twilio(process.env.TWILIO_ACC_SID, process.env.TWILIO_AUTH_TOKEN);
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
