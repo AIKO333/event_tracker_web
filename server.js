@@ -31,7 +31,7 @@ connection.connect(err => {
       birthdate DATE,
       email VARCHAR(100),
       phone VARCHAR(20)
-    );
+    )`;
     connection.query(createTable1, (err, results) => {
         if (err) throw err;
         console.log('Table users created or exists.');
@@ -43,7 +43,7 @@ connection.connect(err => {
           eventType VARCHAR(50),
           date DATE,
           email VARCHAR(100)
-        );
+        )`;
 
         connection.query(createTable2, (err, results) => {
             if (err) throw err;
