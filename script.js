@@ -1,12 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    if (typeof profileData !== 'undefined' && profileData.length > 0) {
+    if (typeof profileData !== 'undefined' && Array.isArray(profileData)) {
+    if (profileData.length > 0) {
       document.getElementById('profileForm')?.classList.add('hidden');
       document.getElementById('website_inside')?.classList.remove('hidden');
     } else {
-        document.getElementById('profileForm')?.classList.remove('hidden');
-        document.getElementById('website_inside')?.classList.add('hidden');
+      document.getElementById('profileForm')?.classList.remove('hidden');
+      document.getElementById('website_inside')?.classList.add('hidden');
     }
+  } else {
+    console.error("profileData is not defined or is not an array.");
+  }
 
     document.getElementById('profileForm').addEventListener('submit', function(event) {
         event.preventDefault();
