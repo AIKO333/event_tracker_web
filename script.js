@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    if (profileExist) {
+    if (typeof profileData !== 'undefined' && profileData.length > 0) {
       document.getElementById('profileForm')?.classList.add('hidden');
       document.getElementById('website_inside')?.classList.remove('hidden');
-    } else {
-        document.getElementById('profileForm')?.classList.remove('hidden');
-        document.getElementById('website_inside')?.classList.add('hidden');
-    }
+  } else {
+      document.getElementById('profileForm')?.classList.remove('hidden');
+      document.getElementById('website_inside')?.classList.add('hidden');
+  }
 
     document.getElementById('profileForm').addEventListener('submit', function(event) {
         event.preventDefault();
