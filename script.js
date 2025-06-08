@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    const profileData= document.getElementById('profileData').getAttribute('profileData'); haha
+    const profileData= document.getElementById('profileData').getAttribute('profileData');
     
     if (profileData.length > 0) {
         document.getElementById('profileForm').classList.add('hidden');
