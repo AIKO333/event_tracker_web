@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    if(profileData.length > 0) {
-        document.getElementById('profileForm').classList.add('hidden');
-        document.getElementById('website_inside').classList.remove('hidden');
+    if (typeof profileData !== 'undefined' && profileData.length > 0) {
+      document.getElementById('profileForm')?.classList.add('hidden');
+      document.getElementById('website_inside')?.classList.remove('hidden');
     } else {
-        document.getElementById('profileForm').classList.remove('hidden');
-        document.getElementById('website_inside').classList.add('hidden');
+        document.getElementById('profileForm')?.classList.remove('hidden');
+        document.getElementById('website_inside')?.classList.add('hidden');
     }
 
     document.getElementById('profileForm').addEventListener('submit', function(event) {
