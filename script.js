@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    if (typeof profileData !== 'undefined' && profileData.length > 0) {
+    if (profileHAHA.length > 0) {
       document.getElementById('profileForm')?.classList.add('hidden');
       document.getElementById('website_inside')?.classList.remove('hidden');
   } else {
