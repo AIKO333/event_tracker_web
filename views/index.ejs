@@ -465,7 +465,7 @@
         </footer>
 
         <script>
-            const profileExist = profileData.length > 0;
+            const profileData = <%- JSON.stringify(profileData || []) %>;
         </script>
 
         <script src="script.js"></script>
