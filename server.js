@@ -1,295 +1,389 @@
-require('dotenv').config();
 const express = require('express');
 const cron = require('node-cron');
-const twilio = require('twilio');
+const twilio = require('twilio')
 const bodyParser = require('body-parser');
+const mysql = require('mysql');
 const cors = require('cors');
+const app = express();
 const path = require('path');
 const sgMail = require('@sendgrid/mail');
 const { parsePhoneNumberFromString } = require('libphonenumber-js');
-const { Client } = require('pg');
+const PORT = process.env.PORT || 3000;
 
-const app = express();
-const PORT = 3000;
-
-// Initialize PostgreSQL client
-const client = new Client({
-  host: process.env.DB_HOST,
-  port: 5432,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  ssl: {
-    rejectUnauthorized: false,  // This allows connection without verifying SSL cert
-  },
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'password123',
+    database: 'celebratemate'
 });
 
-client.connect()
-  .then(() => console.log("Connected to PostgreSQL!"))
-  .catch(err => console.error("Connection error", err.stack));
-
-// Twilio and SendGrid setup (replace with your own credentials in .env)
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+connection.connect(err => {
+    if (err) {
+        console.error('Error connecting to MySQL database:', err);
+        return;
+    }
+    console.log('Connected to MySQL database');
+});
 
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(express.static(path.join(__dirname)));
+
 app.use(cors());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes
-
-app.post('/submit-profile', async (req, res) => {
-  try {
+app.post('/submit-profile', (req, res) => {
     const { name, birthdate, email, phone } = req.body;
-    const sql = 'INSERT INTO profile (name, birthdate, email, phone) VALUES ($1, $2, $3, $4)';
-    await client.query(sql, [name, birthdate, email, phone]);
-    res.send('Profile made successfully!');
-  } catch (err) {
-    console.error('Error inserting profile data:', err);
-    res.status(500).send('Error inserting profile data: ' + err.message);
-  }
-});
 
-app.post('/submit-contact', async (req, res) => {
-  try {
-    const { contactName, eventType, date, email } = req.body;
-    const sql = 'INSERT INTO birthdays (contactName, eventType, date, email) VALUES ($1, $2, $3, $4)';
-    await client.query(sql, [contactName, eventType, date, email]);
-    res.send('Event added successfully!');
-  } catch (err) {
-    console.error('Error inserting event data:', err);
-    res.status(500).send('Error inserting event data: ' + err.message);
-  }
-});
-
-app.post('/submit-message', async (req, res) => {
-  try {
-    const { contactName, fullMessage } = req.body;
-    const sql = 'SELECT * FROM birthdays WHERE contactName = $1';
-    const { rows } = await client.query(sql, [contactName]);
-    if (rows.length > 0) {
-      await sendEmailMessage(rows[0], fullMessage);
-      console.log('Message sent to', rows[0].contactName);
-      res.send('Message sent successfully!');
-    } else {
-      res.status(404).send('Contact not found');
-    }
-  } catch (err) {
-    console.error('Error sending message:', err);
-    res.status(500).send('Error sending message: ' + err.message);
-  }
-});
-
-app.post('/submit-edit-profile', async (req, res) => {
-  try {
-    const { name, birthdate, email, phone } = req.body;
-    const sql = 'UPDATE profile SET name = $1, birthdate = $2, email = $3, phone = $4 WHERE id = 1';
-    await client.query(sql, [name, birthdate, email, phone]);
-    res.send('Profile edited successfully!');
-  } catch (err) {
-    console.error('Error editing profile data:', err);
-    res.status(500).send('Error editing profile data: ' + err.message);
-  }
-});
-
-app.post('/delete-profile', async (req, res) => {
-  try {
-    await client.query('TRUNCATE TABLE profile CASCADE');
-    await client.query('TRUNCATE TABLE birthdays CASCADE');
-    res.sendStatus(200);
-  } catch (err) {
-    console.error('Error deleting profile and birthdays:', err);
-    res.status(500).send('Error deleting profile and birthdays: ' + err.message);
-  }
-});
-
-app.post('/delete-event', async (req, res) => {
-  try {
-    const { contactName } = req.body;
-    const sql = 'DELETE FROM birthdays WHERE contactName = $1';
-    await client.query(sql, [contactName]);
-    res.sendStatus(200);
-  } catch (err) {
-    console.error('Error deleting event:', err);
-    res.status(500).send('Error deleting event: ' + err.message);
-  }
-});
-
-app.get('/', async (req, res) => {
-  try {
-    const sqlEvents = `
-      SELECT * FROM birthdays 
-      ORDER BY 
-        CASE 
-          WHEN EXTRACT(MONTH FROM date) > EXTRACT(MONTH FROM CURRENT_DATE)
-            OR (EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE)
-            AND EXTRACT(DAY FROM date) >= EXTRACT(DAY FROM CURRENT_DATE))
-          THEN TO_CHAR(date, 'MM-DD')
-          ELSE TO_CHAR(date + INTERVAL '1 year', 'MM-DD')
-        END;
-    `;
-    const sqlProfile = 'SELECT * FROM profile';
-
-    const eventsResult = (await client.query(sqlEvents)).rows;
-    const profileData = (await client.query(sqlProfile)).rows;
-
-    res.render('index', { eventsResult, profileData });
-  } catch (err) {
-    console.error('Error loading homepage:', err);
-    res.status(500).send('Error loading homepage: ' + err.message);
-  }
-});
-
-// Email and SMS helper functions
-
-async function sendEmailMessage(user, message) {
-  try {
-    const resProfile = await client.query('SELECT email FROM profile');
-    if (resProfile.rows.length === 0) {
-      console.error('No profile email found');
-      return;
-    }
-    const toEmail = user.email;
-    const fromEmail = resProfile.rows[0].email;
-
-    const msg = {
-      to: toEmail,
-      from: fromEmail,
-      subject: 'A Message For You',
-      text: message,
-    };
-    await sgMail.send(msg);
-    console.log('Email notification sent');
-  } catch (err) {
-    console.error('Error sending email message:', err);
-  }
-}
-
-async function sendSMS(phone, messageBody) {
-  try {
-    const phoneNumber = parsePhoneNumberFromString(phone, 'IN');
-    if (!phoneNumber) {
-      console.error('Invalid phone number format');
-      return;
-    }
-    const formattedPhoneNumber = phoneNumber.format('E.164');
-    const message = await twilioClient.messages.create({
-      body: messageBody,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: formattedPhoneNumber,
+    const sql = 'INSERT INTO profile (name, birthdate, email, phone) VALUES (?, ?, ?, ?)';
+    connection.query(sql, [name, birthdate, email, phone], (err, result) => {
+        if (err) {
+            console.error('Error inserting profile data into database:', err);
+            res.status(500).send('Error inserting profile data into database: ' + err.message);
+            return;
+        }
+        console.log('Profile data inserted into database:', result);
+        res.send('Profile made successfully!');
     });
-    console.log('SMS reminder sent:', message.sid);
-  } catch (err) {
-    console.error('Error sending SMS:', err);
-  }
+});
+
+app.post('/submit-contact', (req, res) => {
+    const { contactName, eventType, date, email } = req.body;
+
+    const sql = 'INSERT INTO birthdays (contactName, eventType, date, email) VALUES (?, ?, ?, ?)';
+    connection.query(sql, [contactName, eventType, date, email], (err, result) => {
+        if (err) {
+            console.error('Error inserting event data into database:', err);
+            res.status(500).send('Error inserting event data into database: ' + err.message);
+            return;
+        }
+        console.log('Event data inserted into database:', result);
+        res.send('Event added successfully!');
+    });
+});
+
+app.post('/submit-message', (req, res) => {
+    const { contactName, fullMessage } = req.body;
+
+    const sql = 'SELECT * from birthdays where contactName = ?';
+    connection.query(sql, [contactName], (err, result) => {
+        if (err) {
+            console.error('Error inserting event data into database:', err);
+            res.status(500).send('Error inserting event data into database: ' + err.message);
+            return;
+        }
+        else
+        {
+            if(result.length > 0)
+                {
+                    sendEmailMessage(result[0], fullMessage);
+                    console.log('Message sent to ', result[0].contactName);
+                    res.send('Message sent successfully!');
+                }
+        }
+    });
+});
+
+app.post('/submit-edit-profile', (req, res) => {
+    const { name, birthdate, email, phone } = req.body;
+
+    const sql = 'UPDATE profile SET name = ?, birthdate = ?, email = ?, phone = ? where id = 1';
+    connection.query(sql, [name, birthdate, email, phone, name], (err, result) => {
+        if (err) {
+            console.error('Error editing profile data:', err);
+            res.status(500).send('Error editing profile data ' + err.message);
+            return;
+        }
+        console.log('Profile data editted:', result);
+        res.send('Profile editted successfully!');
+    });
+});
+
+app.post('/delete-profile', (req, res) => {
+    const sql = 'TRUNCATE TABLE profile;';
+    const sql2 = 'TRUNCATE TABLE birthdays;';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error deleting profile from database:', err);
+            res.status(500).send('Error deleting profile from database: ' + err.message);
+        }
+        else {
+            connection.query(sql2, (err, result2) => {
+                if (err) {
+                    console.error('Error deleting birthdays from database:', err);
+                    res.status(500).send('Error deleting birthdays from database: ' + err.message);
+                }
+                else {
+                    console.log('Profile deleted from database:', result2);
+                    res.sendStatus(200);
+                }
+            });
+        }
+    });
+});
+
+app.post('/delete-event', (req, res) => {
+    const { contactName } = req.body;
+
+    const sql = 'delete from birthdays where contactName = ?';
+    connection.query(sql, [contactName], (err, result) => {
+        if (err) {
+            console.error('Error deleting row from database:', err);
+            res.status(500).send('Error deleting row from database: ' + err.message);
+        }
+        else {
+            console.log('Row deleted from database:', result);
+            res.sendStatus(200);
+        }
+    });
+});
+
+app.get('/', (req, res) => {
+    const sql = "SELECT * FROM birthdays ORDER BY CASE WHEN MONTH(date) > MONTH(CURRENT_DATE()) OR (MONTH(date) = MONTH(CURRENT_DATE()) AND DAY(date) >= DAY(CURRENT_DATE())) THEN DATE_FORMAT(date, '%m-%d') ELSE DATE_FORMAT(DATE_ADD(date, INTERVAL 1 YEAR), '%m-%d') END;";
+    
+    const sql2 = "SELECT * FROM profile;";
+
+    connection.query(sql, (err, data) => {
+      if (err) {
+        throw err;
+      }
+
+      connection.query(sql2, (err2, data2) => {
+        if (err2) {
+          throw err2;
+        }
+      res.render('index', { eventsResult: data, profileData: data2 });
+    });
+  });
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+const twilioClient = new twilio('ACa8b7f8803eb57f1b9918dc305fe1070f', 'c2fa5d451be4d354bc37f95b95b6e384');
+
+sgMail.setApiKey('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');
+
+function sendEmailMessage(user, message) {
+    const sql = 'SELECT email FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const toEmail = user.email;
+            const fromEmail = result[0].email;
+            const msg = {
+                to: toEmail,
+                from: fromEmail,
+                subject: 'A Message For You',
+                text: message,
+            };
+
+            sgMail.send(msg)
+            .then(() => console.log('Email notification sent'))
+            .catch(error => console.error('Error sending email notification: ', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendEmail(toEmail, subject, text) {
-  try {
-    const resProfile = await client.query('SELECT email FROM profile');
-    if (resProfile.rows.length === 0) {
-      console.error('No profile email found');
-      return;
-    }
-    const fromEmail = resProfile.rows[0].email;
-    const msg = { to: toEmail, from: fromEmail, subject, text };
-    await sgMail.send(msg);
-    console.log('Email notification sent');
-  } catch (err) {
-    console.error('Error sending email:', err);
-  }
+function sendSMSForTommorrow(user) {
+    const sql = 'SELECT phone FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const phoneNumber = parsePhoneNumberFromString(result[0].phone, 'IN'); 
+            const formattedPhoneNumber = phoneNumber.format('E.164');
+            twilioClient.messages.create({
+            body: `${user.contactName}'s ${user.eventType} is coming up on ${user.date}! Don't forget to celebrate!`,
+            from: '+12098829488',
+            to: formattedPhoneNumber
+            })
+            .then(message => console.log(`SMS reminder sent: ${message.sid}`))
+            .catch(error => console.error('Error sending SMS reminder:', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendSMSForTomorrow(user) {
-  await sendSMS(
-    (await client.query('SELECT phone FROM profile')).rows[0].phone,
-    `${user.contactName}'s ${user.eventType} is coming up on ${user.date}! Don't forget to celebrate!`
-  );
+function sendEmailForTommorrow(user) {
+    const sql = 'SELECT email FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const toEmail = result[0].email;
+            const msg = {
+                to: toEmail,
+                from: 'ayeshamahaboob8@gmail.com',
+                subject: 'Upcoming Event Reminder',
+                text: `${user.contactName}'s ${user.eventType} is coming up on ${user.date}! Don't forget to celebrate!`,
+            };
+
+            sgMail.send(msg)
+            .then(() => console.log('Email notification sent'))
+            .catch(error => console.error('Error sending email notification: ', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendEmailForTomorrow(user) {
-  const email = (await client.query('SELECT email FROM profile')).rows[0].email;
-  await sendEmail(
-    email,
-    'Upcoming Event Reminder',
-    `${user.contactName}'s ${user.eventType} is coming up on ${user.date}! Don't forget to celebrate!`
-  );
+function sendSMSForToday(user) {
+    const sql = 'SELECT phone FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const phoneNumber = parsePhoneNumberFromString(result[0].phone, 'IN');
+            const formattedPhoneNumber = phoneNumber.format('E.164');
+            twilioClient.messages.create({
+            body: `Its ${user.contactName}'s ${user.eventType} today! Did you wish them yet?`,
+            from: '+12098829488',
+            to: formattedPhoneNumber
+            })
+            .then(message => console.log(`SMS reminder sent: ${message.sid}`))
+            .catch(error => console.error('Error sending SMS reminder:', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendSMSForToday(user) {
-  await sendSMS(
-    (await client.query('SELECT phone FROM profile')).rows[0].phone,
-    `It's ${user.contactName}'s ${user.eventType} today! Did you wish them yet?`
-  );
+function sendEmailForToday(user) {
+    const sql = 'SELECT email FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const toEmail = result[0].email;
+            const msg = {
+                to: toEmail,
+                from: 'ayeshamahaboob8@gmail.com',
+                subject: 'Upcoming Event Reminder',
+                text: `Its ${user.contactName}'s ${user.eventType} today! Did you wish them yet?`,
+            };
+
+            sgMail.send(msg)
+            .then(() => console.log('Email notification sent'))
+            .catch(error => console.error('Error sending email notification: ', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendEmailForToday(user) {
-  const email = (await client.query('SELECT email FROM profile')).rows[0].email;
-  await sendEmail(
-    email,
-    'Event Reminder',
-    `It's ${user.contactName}'s ${user.eventType} today! Did you wish them yet?`
-  );
+function sendHappyBirthdaySMS(user) {
+    const sql = 'SELECT phone FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const phoneNumber = parsePhoneNumberFromString(result[0].phone, 'IN');
+            const formattedPhoneNumber = phoneNumber.format('E.164');
+            twilioClient.messages.create({
+            body: `Happy Birthday ${user.name}! Hope you have a wonderful day!`,
+            from: '+12098829488',
+            to: formattedPhoneNumber
+            })
+            .then(message => console.log(`SMS reminder sent: ${message.sid}`))
+            .catch(error => console.error('Error sending SMS reminder:', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendHappyBirthdaySMS(user) {
-  await sendSMS(
-    (await client.query('SELECT phone FROM profile')).rows[0].phone,
-    `Happy Birthday ${user.name}! Hope you have a wonderful day!`
-  );
+function sendHappyBirthdayEmail(user) {
+    const sql = 'SELECT email FROM profile';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error fetching phone number from profile:', err);
+            return;
+        }
+        if (result.length > 0) {
+            const toEmail = result[0].email;
+            const msg = {
+                to: toEmail,
+                from: 'ayeshamahaboob8@gmail.com',
+                subject: `It's your day today!`,
+                text: `Happy Birthday ${user.name}! Hope you have a wonderful day!`,
+            };
+
+            sgMail.send(msg)
+            .then(() => console.log('Email notification sent'))
+            .catch(error => console.error('Error sending email notification: ', error));
+        }
+        else {
+            console.error('No profile found for user');
+        }
+    });
 }
 
-async function sendHappyBirthdayEmail(user) {
-  const email = (await client.query('SELECT email FROM profile')).rows[0].email;
-  await sendEmail(
-    email,
-    "It's your day today!",
-    `Happy Birthday ${user.name}! Hope you have a wonderful day!`
-  );
-}
-
-// Cron job running every day at 9:00 AM server time
-cron.schedule('0 9 * * *', async () => {
-  try {
+  cron.schedule('0 9 * * *', () => {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Fetch birthdays for tomorrow
-    const sqlEventsTomorrow = `
-      SELECT * FROM birthdays 
-      WHERE EXTRACT(MONTH FROM date) = $1 AND EXTRACT(DAY FROM date) = $2
-    `;
-    const usersTomorrow = (await client.query(sqlEventsTomorrow, [tomorrow.getMonth() + 1, tomorrow.getDate()])).rows;
-    for (const user of usersTomorrow) {
-      await sendSMSForTomorrow(user);
-      await sendEmailForTomorrow(user);
-    }
+    const queryEvents = 'SELECT * FROM birthdays WHERE MONTH(date) = ? AND DAY(date) = ?';
+    connection.query(queryEvents, [tomorrow.getMonth() + 1, tomorrow.getDate()], (err, users) => {
+      if (err) {
+        console.error('Error fetching upcoming birthdays:', err);
+        return;
+      }
 
-    // Fetch birthdays for today
-    const usersToday = (await client.query(sqlEventsTomorrow, [today.getMonth() + 1, today.getDate()])).rows;
-    for (const user of usersToday) {
-      await sendSMSForToday(user);
-      await sendEmailForToday(user);
-    }
+      users.forEach(user => {
+        sendSMSForTommorrow(user);
+        sendEmailForTommorrow(user);
+      });
+    });
 
-    // Fetch profile birthday for today (assuming id=1 for profile)
-    const sqlProfileBirthday = `
-      SELECT * FROM profile 
-      WHERE EXTRACT(MONTH FROM birthdate) = $1 AND EXTRACT(DAY FROM birthdate) = $2 AND id = 1
-    `;
-    const profileUsers = (await client.query(sqlProfileBirthday, [today.getMonth() + 1, today.getDate()])).rows;
-    for (const user of profileUsers) {
-      await sendHappyBirthdaySMS(user);
-      await sendHappyBirthdayEmail(user);
-    }
-  } catch (err) {
-    console.error('Error in cron job:', err);
-  }
-});
+    connection.query(queryEvents, [today.getMonth() + 1, today.getDate()], (err, users) => {
+        if (err) {
+          console.error('Error fetching upcoming birthdays:', err);
+          return;
+        }
+        
+        users.forEach(user => {
+          sendSMSForToday(user);
+          sendEmailForToday(user);
+        });
+      });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+      const queryEvent = 'SELECT * FROM profile WHERE MONTH(birthdate) = ? AND DAY(birthdate) = ? AND id = 1';
+      connection.query(queryEvent, [today.getMonth() + 1, today.getDate()], (err, users) => {
+        if (err) {
+          console.error('Error fetching upcoming birthdays:', err);
+          return;
+        }
+        
+        users.forEach(user => {
+          sendHappyBirthdaySMS(user);
+          sendHappyBirthdayEmail(user);
+        });
+      });
+  });
