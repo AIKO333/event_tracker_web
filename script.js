@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formDataObject[key] = value;
         });
         
-        const response = await fetch('http://localhost:3000/submit-profile', {
+        const response = await fetch('/submit-profile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formDataObject[key] = value;
         });
 
-        const response = await fetch('http://localhost:3000/submit-contact', {
+        const response = await fetch('/submit-contact', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formDataObject[key] = value;
         });
         
-        const response = await fetch('http://localhost:3000/submit-message', {
+        const response = await fetch('/submit-message', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             formDataObject[key] = value;
         });
         
-        const response = await fetch('http://localhost:3000/submit-edit-profile', {
+        const response = await fetch('/submit-edit-profile', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
