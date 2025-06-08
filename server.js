@@ -24,6 +24,32 @@ connection.connect(err => {
         return;
     }
     console.log('Connected to MySQL database');
+
+    const createTable1 = `CREATE TABLE IF NOT EXISTS profile (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100),
+      birthdate DATE,
+      email VARCHAR(100),
+      phone VARCHAR(20)
+    );
+    connection.query(createTable1, (err, results) => {
+        if (err) throw err;
+        console.log('Table users created or exists.');
+
+        // Create second table
+        const createTable2 = `CREATE TABLE IF NOT EXISTS birthdays (
+          id SERIAL PRIMARY KEY,
+          contactName VARCHAR(100),
+          eventType VARCHAR(50),
+          date DATE,
+          email VARCHAR(100)
+        );
+
+        connection.query(createTable2, (err, results) => {
+            if (err) throw err;
+            console.log('Table orders created or exists.');
+        });
+    });
 });
 
 app.set('view engine', 'ejs');
